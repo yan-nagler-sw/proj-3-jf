@@ -2,19 +2,23 @@ pipeline {
     agent any
 
     environment {
+        proj="proj-3"
         py = "python"
 
         crs_dir = '%USERPROFILE%\\Desktop\\dev-ops-course'
         env_dir = "${crs_dir}\\env"
         py_dir = "${crs_dir}\\py"
-
         pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
 
-        dkr_img="proj-3"
-        dkr_usr="yannagler"
-        dkr_repo="${dkr_usr}/${dkr_img}"
+        dkr_img_name_local = proj
+        dkr_usr = "yannagler"
+        dkr_repo = "${dkr_usr}/${proj}"
 
-        img_ver="1.2.3"
+        dkr_svc = "rest"
+        dkr_img_name = "${proj}_${dkr_svc}"
+        dkr_cnt_name = "${dkr_img_name}_1"
+
+        img_ver = "1.2.3"
     }
 
     stages {
@@ -53,6 +57,12 @@ pipeline {
                 bat """
                     cp ${env_dir}/chromedriver .
                 """
+
+                echo "Cleaning Docker environment..."
+                bat """
+                    docker rm -f ${dkr_cnt_name}
+                    docker rmi -f ${dkr_img_name}
+                """
             }
         }
 
@@ -88,10 +98,9 @@ pipeline {
 
         stage("Stage-6: Build Docker image") {
             steps {
-                echo "Building Docker image: ${dkr_img}..."
+                echo "Building Docker image: ${dkr_img_name_local}..."
                 bat """
-                    docker rmi ${dkr_img}
-                    docker build -t ${dkr_img} .
+                    docker build -t ${dkr_img_name_local} .
                     docker images
                 """
             }
@@ -99,10 +108,10 @@ pipeline {
 
         stage("Stage-7: Push Docker image to Hub") {
             steps {
-                echo "Pushing Docker image to Hub: ${dkr_img}..."
+                echo "Pushing Docker image to Hub: ${dkr_img_name_local}..."
                 bat """
                     docker login
-                    docker tag ${dkr_img} ${dkr_repo}
+                    docker tag ${dkr_img_name_local} ${dkr_repo}
                     docker push ${dkr_repo}
                 """
             }

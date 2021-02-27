@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        ERR123
         py = "python"
 
 //        usr = "Yan"

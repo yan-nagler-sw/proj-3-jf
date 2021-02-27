@@ -9,6 +9,8 @@ pipeline {
         py_dir = "${crs_dir}\\py"
 
         pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
+
+        dkr_img="proj-3"
     }
 
     stages {
@@ -72,6 +74,17 @@ pipeline {
                 bat """
                     set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     ${py} clean_environment.py
+                """
+            }
+        }
+
+        stage("Stage-6: Build Docker image") {
+            steps {
+                echo "Building Docker image: ${dkr_img}..."
+                bat """
+                    docker rmi ${dkr_img}
+                    docker build -t ${dkr_img} .
+                    docker images
                 """
             }
         }

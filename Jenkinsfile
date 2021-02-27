@@ -117,6 +117,16 @@ pipeline {
                 """
             }
         }
+
+        stage("Stage-9: Build Docker container") {
+            steps {
+                echo "Build Docker container..."
+                bat """
+                    docker-compose up --build -d
+                    docker pa -a
+                """
+            }
+        }
     }
 
     post {

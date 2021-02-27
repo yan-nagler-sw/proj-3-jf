@@ -11,6 +11,8 @@ pipeline {
         pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
 
         dkr_img="proj-3"
+        dkr_usr="yannagler"
+        dkr_repo="${dkr_usr}/${dkr_img}"
     }
 
     stages {
@@ -85,6 +87,17 @@ pipeline {
                     docker rmi ${dkr_img}
                     docker build -t ${dkr_img} .
                     docker images
+                """
+            }
+        }
+
+        stage("Stage-7: Push Docker image to Hub") {
+            steps {
+                echo "Pushing Docker image to Hub: ${dkr_img}..."
+                bat """
+                    docker login
+                    docker tag ${dkr_img} ${dkr_repo}
+                    docker push ${dkr_repo}
                 """
             }
         }

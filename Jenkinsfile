@@ -57,12 +57,6 @@ pipeline {
                 bat """
                     cp ${env_dir}/chromedriver .
                 """
-
-                echo "Cleaning Docker environment..."
-                bat """
-                    docker rm -f ${dkr_cnt_name}
-                    docker rmi -f ${dkr_img_name}
-                """
             }
         }
 
@@ -155,9 +149,6 @@ pipeline {
             echo "Cleaning Docker environment..."
             bat """
                 docker-compose down
-                docker ps -a
-
-                docker rm -f ${dkr_cnt_name}
                 docker rmi -f ${dkr_img_name}
 
                 docker ps -a

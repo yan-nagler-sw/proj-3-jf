@@ -13,6 +13,8 @@ pipeline {
         dkr_img="proj-3"
         dkr_usr="yannagler"
         dkr_repo="${dkr_usr}/${dkr_img}"
+
+        img_ver="1.2.3"
     }
 
     stages {
@@ -98,6 +100,15 @@ pipeline {
                     docker login
                     docker tag ${dkr_img} ${dkr_repo}
                     docker push ${dkr_repo}
+                """
+            }
+        }
+
+        stage("Stage-8: Set compose image version") {
+            steps {
+                echo "Setting compose image version: ${img_ver}..."
+                bat """
+                    echo IMAGE_TAG=${img_ver} > .env
                 """
             }
         }

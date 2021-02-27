@@ -151,7 +151,14 @@ pipeline {
     post {
         always {
             echo "post - always"
-        }
+
+            echo "Cleaning Docker environment..."
+            bat """
+                docker-compose down
+                docker rm -f ${dkr_cnt_name}
+                docker rmi -f ${dkr_img_name}
+            """
+       }
         success {
             echo "post - success"
 /*

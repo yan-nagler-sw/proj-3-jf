@@ -4,8 +4,6 @@ pipeline {
     environment {
         py = "python"
 
-//        usr = "Yan"
-//        crs_dir = "C:\\Users\\${usr}\\Desktop\\dev-ops-course"
         crs_dir = '%USERPROFILE%\\Desktop\\dev-ops-course'
         env_dir = "${crs_dir}\\env"
         py_dir = "${crs_dir}\\py"
@@ -35,8 +33,6 @@ pipeline {
 
         stage("Stage-2: Handle prerequisites") {
             steps {
-                echo "${py}"
-                echo "${pkgs_dir}"
                 echo "Running Python script: backend_testing_db.py..."
                 bat """
                     set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
@@ -53,30 +49,30 @@ pipeline {
         stage("Stage-3: Launch REST server") {
             steps {
                 echo "Running Python script: rest_app.py..."
-                sh '''
+                bat """
                     set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     start /min ${py} rest_app.py
-                '''
+                """
             }
         }
 
         stage("Stage-4: Launch BE test") {
             steps {
                 echo "Running Python script: backend_testing.py..."
-                sh '''
+                bat """
                     set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     ${py} backend_testing.py
-                '''
+                """
             }
         }
 
         stage("Stage-5: Clean environment") {
             steps {
                 echo "Running Python script: clean_environment.py..."
-                sh '''
+                bat """
                     set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     ${py} clean_environment.py
-                '''
+                """
             }
         }
     }

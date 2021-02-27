@@ -10,7 +10,7 @@ pipeline {
         py_dir = "${crs_dir}\\py"
         pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
 
-        dkr_img_name_local = $proj
+        dkr_img_name_local = "$proj"
         dkr_usr = "yannagler"
         dkr_repo = "${dkr_usr}/${proj}"
 

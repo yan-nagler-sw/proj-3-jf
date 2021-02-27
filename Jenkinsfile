@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        ERR123
         py = "python"
 
 //        usr = "Yan"
@@ -36,6 +35,8 @@ pipeline {
 
         stage("Stage-2: Handle prerequisites") {
             steps {
+                echo ${py}
+                echo ${pkgs_dir}
                 echo "Running Python script: backend_testing_db.py..."
                 bat '''
                     set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}

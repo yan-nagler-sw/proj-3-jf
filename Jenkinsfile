@@ -38,15 +38,15 @@ pipeline {
                 echo "${py}"
                 echo "${pkgs_dir}"
                 echo "Running Python script: backend_testing_db.py..."
-                bat '''
+                bat """
                     set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     ${py} backend_testing_db.py
-                '''
+                """
 
                 echo "Copying Selenium WebDriver - Chrome..."
-                sh '''
+                bat """
                     cp ${env_dir}/chromedriver .
-                '''
+                """
             }
         }
 

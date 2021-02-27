@@ -123,7 +123,7 @@ pipeline {
                 echo "Build Docker container..."
                 bat """
                     docker-compose up --build -d
-                    docker pa -a
+                    docker ps -a
                 """
             }
         }

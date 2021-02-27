@@ -5,12 +5,12 @@ pipeline {
         py = "python"
 
         usr = "Yan"
-        crs_dir = "C:\Users\${usr}\Desktop\dev-ops-course"
+        crs_dir = "C:\\Users\\${usr}\\Desktop\\dev-ops-course"
 //        crs_dir = '%USERPROFILE%\Desktop\dev-ops-course'
-        env_dir = "${crs_dir}\env"
-        py_dir = "${crs_dir}\py"
+        env_dir = "${crs_dir}\\env"
+        py_dir = "${crs_dir}\\py"
 
-        pkgs_dir = "${py_dir}\venv\Lib\site-packages"
+        pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
     }
 
     stages {

@@ -1,22 +1,16 @@
 pipeline {
     agent any
 
-    parameters {
-        choice(
-            name: "test_type",
-            choices: ['3', '1', '2'],
-            description: ''
-        )
-    }
-
     environment {
-        usr = "yannagler"
-        crs_dir = "/Users/${usr}/Desktop/dev-ops-course"
-        env_dir = "${crs_dir}/env"
-        py_dir = "${crs_dir}/py"
+        py = "python"
 
-        py = "python3.9"
-        pkgs_dir = "${py_dir}/venv/lib/${py}/site-packages"
+//        usr = "Yan"
+//        crs_dir = "C:\Users\${usr}\Desktop\dev-ops-course"
+        crs_dir = '%USERPROFILE%\Desktop\dev-ops-course'
+        env_dir = "${crs_dir}\env"
+        py_dir = "${crs_dir}\py"
+
+        pkgs_dir = "${py_dir}\venv\Lib\site-packages"
     }
 
     stages {
@@ -28,23 +22,22 @@ pipeline {
                                         artifactDaysToKeepStr: '',
                                         artifactNumToKeepStr: '',
                                         daysToKeepStr: '5',
-                                        numToKeepStr: '20')),
-                                        
+                                        numToKeepStr: '1')),
+//                                        numToKeepStr: '20')),
+
                         pipelineTriggers([pollSCM('30 * * * *')])
                     ])
                 }
 
-                git 'https://github.com/yan-nagler-sw/proj-2.git'
+                git 'https://github.com/yan-nagler-sw/proj-3.git'
             }
         }
 
         stage("Stage-2: Handle prerequisites") {
             steps {
-                echo "test_type: ${params.test_type}"
-
                 echo "Running Python script: backend_testing_db.py..."
-                sh '''
-                    export PYTHONPATH="${pkgs_dir}:\\$PYTHONPATH"
+                bat '''
+                    set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     ${py} backend_testing_db.py
                 '''
 
@@ -59,81 +52,27 @@ pipeline {
             steps {
                 echo "Running Python script: rest_app.py..."
                 sh '''
-                    export PYTHONPATH="${pkgs_dir}:\\$PYTHONPATH"
-                    nohup $py rest_app.py &
+                    set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
+                    start /min ${py} rest_app.py
                 '''
             }
         }
 
-        stage("Stage-4: Launch Web server") {
+        stage("Stage-4: Launch BE test") {
             steps {
-                echo "Running Python script: web_app.py..."
-                sh '''
-                    export PYTHONPATH="${pkgs_dir}:\\$PYTHONPATH"
-                    nohup ${py} web_app.py &
-                '''
-            }
-        }
-
-        stage("Stage-5: Launch BE test") {
-            when {
-                expression {
-                    params.test_type == '2'
-                }
-            }
-
-            steps {
-                echo "test_type: ${params.test_type}"
-
                 echo "Running Python script: backend_testing.py..."
                 sh '''
-                    export PYTHONPATH="${pkgs_dir}:\\$PYTHONPATH"
+                    set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     ${py} backend_testing.py
                 '''
             }
         }
 
-        stage("Stage-6: Launch FE test") {
-            when {
-                expression {
-                    params.test_type == '1'
-                }
-            }
-
-            steps {
-                echo "test_type: ${params.test_type}"
-
-                echo "Running Python script: frontend_testing.py..."
-                sh '''
-                    export PYTHONPATH="${pkgs_dir}:\\$PYTHONPATH"
-                    ${py} frontend_testing.py
-                '''
-            }
-        }
-
-        stage("Stage-7: Launch combined test") {
-            when {
-                expression {
-                    params.test_type == '3'
-                }
-            }
-
-            steps {
-                echo "test_type: ${params.test_type}"
-
-                echo "Running Python script: combined_testing.py..."
-                sh '''
-                    export PYTHONPATH="${pkgs_dir}:\\$PYTHONPATH"
-                    ${py} combined_testing.py
-                '''
-            }
-        }
-
-        stage("Stage-8: Clean environment") {
+        stage("Stage-5: Clean environment") {
             steps {
                 echo "Running Python script: clean_environment.py..."
                 sh '''
-                    export PYTHONPATH="${pkgs_dir}:\\$PYTHONPATH"
+                    set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     ${py} clean_environment.py
                 '''
             }
@@ -146,17 +85,19 @@ pipeline {
         }
         success {
             echo "post - success"
-
+/*
             mail to: 'yan.nagler@gmail.com',
                  subject: "post - success: ${currentBuild.fullDisplayName}",
                  body: "post - success: ${env.BUILD_URL}"
+*/
         }
         failure {
             echo "post - failure"
-
+/*
             mail to: 'yan.nagler@gmail.com',
                  subject: "post - failure: ${currentBuild.fullDisplayName}",
                  body: "post - failure: ${env.BUILD_URL}"
+*/
         }
         unstable {
             echo "post - unstable"

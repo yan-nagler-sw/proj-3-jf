@@ -136,6 +136,16 @@ pipeline {
                 """
             }
         }
+
+        stage("Stage-10: Launch BE test - Docker") {
+            steps {
+                echo "Launching BE test - Docker: docker_backend_testing.py..."
+                bat """
+                    set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
+                    ${py} docker_backend_testing.py
+                """
+            }
+        }
     }
 
     post {

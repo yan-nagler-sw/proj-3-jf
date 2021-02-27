@@ -34,6 +34,10 @@ pipeline {
                 }
 
                 git 'https://github.com/yan-nagler-sw/proj-3.git'
+
+                bat """
+                    dir /A
+                """
             }
         }
 
@@ -109,6 +113,7 @@ pipeline {
                 echo "Setting compose image version: ${img_ver}..."
                 bat """
                     echo IMAGE_TAG=${img_ver} > .env
+                    type .env
                 """
             }
         }

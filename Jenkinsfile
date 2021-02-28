@@ -90,7 +90,7 @@ pipeline {
 
         stage("Stage-6: Build Docker image") {
             steps {
-                echo "Building Docker image: ${dkr_img_name_local}..."
+                echo "Building Docker image: ${dkr_img_name}..."
                 bat """
                     docker build -t ${dkr_img_name} .
                     docker images

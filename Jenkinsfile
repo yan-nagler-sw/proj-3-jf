@@ -148,8 +148,8 @@ pipeline {
             bat """
                 docker-compose down
 
-                docker rmi -f ${dkr_img_name}
                 docker rmi -f ${dkr_img_name_repo}
+                docker rmi -f ${dkr_img_name}
                 docker rmi -f ${dkr_img_name_cmp}
 
                 docker ps -a

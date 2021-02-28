@@ -10,13 +10,12 @@ pipeline {
         py_dir = "${crs_dir}\\py"
         pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
 
-        dkr_img_name_local = "$proj"
-        dkr_usr = "yannagler"
-        dkr_repo = "${dkr_usr}/${proj}"
+        dkr_img_name = "$proj"
+        dkr_repo_usr = "yannagler"
+        dkr_img_name_repo = "${dkr_repo_usr}/${dkr_img_name}"
 
         dkr_svc = "rest"
-        dkr_img_name = "${proj}_${dkr_svc}"
-        dkr_cnt_name = "${dkr_img_name}_1"
+        dkr_img_name_cmp = "${dkr_img_name}_${dkr_svc}"
 
         img_ver = "1.2.3"
     }
@@ -93,7 +92,7 @@ pipeline {
             steps {
                 echo "Building Docker image: ${dkr_img_name_local}..."
                 bat """
-                    docker build -t ${dkr_img_name_local} .
+                    docker build -t ${dkr_img_name} .
                     docker images
                 """
             }
@@ -101,11 +100,11 @@ pipeline {
 
         stage("Stage-7: Push Docker image to Hub") {
             steps {
-                echo "Pushing Docker image to Hub: ${dkr_img_name_local}..."
+                echo "Pushing Docker image to Hub: ${dkr_img_name} -> ${dkr_img_name_repo}..."
                 bat """
                     docker login
-                    docker tag ${dkr_img_name_local} ${dkr_repo}
-                    docker push ${dkr_repo}
+                    docker tag ${dkr_img_name} ${dkr_img_name_repo}
+                    docker push ${dkr_img_name_repo}
                 """
             }
         }
@@ -148,7 +147,10 @@ pipeline {
             echo "Cleaning Docker environment..."
             bat """
                 docker-compose down
+
                 docker rmi -f ${dkr_img_name}
+                docker rmi -f ${dkr_img_name_repo}
+                docker rmi -f ${dkr_img_name_cmp}
 
                 docker ps -a
                 docker images

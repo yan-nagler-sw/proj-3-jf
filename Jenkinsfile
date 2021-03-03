@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        proj="proj-4"
+        proj="proj-3"
         py = "python"
 
         cred_id="yan-nagler"

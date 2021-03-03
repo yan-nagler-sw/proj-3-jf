@@ -2,8 +2,10 @@ pipeline {
     agent any
 
     environment {
-        proj="proj-3"
+        proj="proj-4"
         py = "python"
+
+        cred_id="yan-nagler"
 
         crs_dir = '%USERPROFILE%\\Desktop\\dev-ops-course'
         env_dir = "${crs_dir}\\env"
@@ -11,8 +13,10 @@ pipeline {
         pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
 
         dkr_img_name = "$proj"
-        dkr_repo_usr = "yannagler"
-        dkr_img_name_repo = "${dkr_repo_usr}/${dkr_img_name}"
+
+        dkr_reg_usr = "yannagler"
+        dkr_reg_repo = "${dkr_reg_usr}/${dkr_img_name}"
+        dkr_img_reg = ""
 
         dkr_svc = "rest"
         dkr_img_name_cmp = "${dkr_img_name}_${dkr_svc}"
@@ -35,7 +39,7 @@ pipeline {
                     ])
                 }
 
-                git 'https://github.com/yan-nagler-sw/proj-3.git'
+                git "https://github.com/yan-nagler-sw/${proj}.git"
 
                 bat """
                     dir /A
@@ -91,8 +95,10 @@ pipeline {
         stage("Stage-6: Build Docker image") {
             steps {
                 echo "Building Docker image: ${dkr_img_name}..."
+                script {
+                    dkr_img_reg = docker.build dkr_reg_repo + ":$BUILD_NUMBER"
+                }
                 bat """
-                    docker build -t ${dkr_img_name} .
                     docker images
                 """
             }
@@ -100,12 +106,12 @@ pipeline {
 
         stage("Stage-7: Push Docker image to Hub") {
             steps {
-                echo "Pushing Docker image to Hub: ${dkr_img_name} -> ${dkr_img_name_repo}..."
-                bat """
-                    docker login
-                    docker tag ${dkr_img_name} ${dkr_img_name_repo}
-                    docker push ${dkr_img_name_repo}
-                """
+                echo "Pushing Docker image to Hub..."
+                script {
+                    docker.withRegistry('', cred_id) {
+                        dkr_img_reg.push()
+                    }
+                }
             }
         }
 
@@ -148,7 +154,8 @@ pipeline {
             bat """
                 docker-compose down
 
-                docker rmi -f ${dkr_img_name_repo}
+                docker rmi $dkr_reg_repo:$BUILD_NUMBER
+
                 docker rmi -f ${dkr_img_name}
                 docker rmi -f ${dkr_img_name_cmp}
 

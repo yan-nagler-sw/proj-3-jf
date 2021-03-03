@@ -119,7 +119,7 @@ pipeline {
             steps {
                 echo "Setting compose image version: ${img_ver}..."
                 bat """
-                    echo IMAGE_TAG=${img_ver} > .env
+                    echo IMAGE_TAG=${BUILD_NUMBER} > .env
                     type .env
                 """
             }

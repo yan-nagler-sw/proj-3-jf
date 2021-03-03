@@ -20,8 +20,6 @@ pipeline {
 
         dkr_svc = "rest"
         dkr_img_name_cmp = "${dkr_img_name}_${dkr_svc}"
-
-        img_ver = "1"
     }
 
     stages {
@@ -117,7 +115,7 @@ pipeline {
 
         stage("Stage-8: Set compose image version") {
             steps {
-                echo "Setting compose image version: ${img_ver}..."
+                echo "Setting compose image version: ${BUILD_NUMBER}..."
                 bat """
                     echo IMAGE_TAG=${BUILD_NUMBER} > .env
                     type .env

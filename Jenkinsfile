@@ -12,14 +12,10 @@ pipeline {
         py_dir = "${crs_dir}\\py"
         pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
 
-        dkr_img_name = "$proj"
-
+        dkr_img = "$proj"
         dkr_reg_usr = "yannagler"
-        dkr_reg_repo = "${dkr_reg_usr}/${dkr_img_name}"
+        dkr_reg_repo = "${dkr_reg_usr}/${dkr_img}"
         dkr_img_reg = ""
-
-        dkr_svc = "rest"
-        dkr_img_name_cmp = "${dkr_img_name}_${dkr_svc}"
     }
 
     stages {
@@ -92,7 +88,7 @@ pipeline {
 
         stage("Stage-6: Build Docker image") {
             steps {
-                echo "Building Docker image: ${dkr_img_name}..."
+                echo "Building Docker image: ${dkr_reg_repo}:$BUILD_NUMBER..."
                 script {
                     dkr_img_reg = docker.build dkr_reg_repo + ":$BUILD_NUMBER"
                 }
@@ -153,9 +149,6 @@ pipeline {
                 docker-compose down
 
                 docker rmi $dkr_reg_repo:$BUILD_NUMBER
-
-                docker rmi -f ${dkr_img_name}
-                docker rmi -f ${dkr_img_name_cmp}
 
                 docker ps -a
                 docker images

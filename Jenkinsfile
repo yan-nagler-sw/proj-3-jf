@@ -21,7 +21,7 @@ pipeline {
         dkr_svc = "rest"
         dkr_img_name_cmp = "${dkr_img_name}_${dkr_svc}"
 
-        img_ver = "1.2.3"
+        img_ver = "1"
     }
 
     stages {

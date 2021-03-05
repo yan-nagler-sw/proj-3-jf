@@ -158,7 +158,7 @@ pipeline {
                 docker ps -a
                 docker images
             """
-       }
+        }
         success {
             echo "post - success"
 /*

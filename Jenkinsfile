@@ -12,7 +12,7 @@ pipeline {
         py_dir = "${crs_dir}\\py"
         pkgs_dir = "${py_dir}\\venv\\Lib\\site-packages"
 
-        dkr_img_base = "$proj"
+        dkr_img_base = "${proj}"
         dkr_reg_usr = "yannagler"
 
         dkr_img_reg_base = "${dkr_reg_usr}/${dkr_img_base}"
@@ -64,6 +64,7 @@ pipeline {
                 bat """
                     set PYTHONPATH=%PYTHONPATH%;${pkgs_dir}
                     start /min ${py} rest_app.py
+                    sleep 5
                 """
             }
         }
